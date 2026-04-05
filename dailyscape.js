@@ -49,13 +49,6 @@ var rs3dailyshops = {
             {id: 24127, quantity: 1500, shop_price: 200}, //bakriminel bolt tips
         ]
     },
-    "feather-shop-run": {task: "Feather Shop Run", url: "https://runescape.wiki/w/Money_making_guide/Buying_feathers", short: true, desc: 'Normalized for 24 hours',
-        outputs: [
-            {id: 314, quantity: 12000, shop_price: 6}, //feathers
-            {id: 314, quantity: 110000, shop_price: 7.5, multiplier: 0.4, label_override: 'Feather (Packs@60hrs)'}, //feather packs respawn over 60 hours 24/60=0.4
-            {id: 313, quantity: 9000, shop_price: 3}, //fishing bait
-        ]
-    },
     "miscellania": {task: "Miscellania", url: "https://runescape.wiki/w/Calculator:Other/Miscellania", short: true, desc: "Check approval rating and funds in coffer",
         outputs: [
             {id: 1517, quantity: 892, shop_price: 0}, //maple logs
@@ -63,36 +56,6 @@ var rs3dailyshops = {
         ],
         inputs: [
             {id: -1, quantity: 1, shop_price: 37500}, //kingdom upkeep
-        ]
-    },
-    "meat-packs-from-oo-glog": {task: "Meat Packs from Oo'glog", url: "https://runescape.wiki/w/Money_making_guide/Buying_Meat_from_Oo%27glog", short: true, desc: "Only buy packs",
-        outputs: [
-            {id: 2132, quantity: 300, shop_price: 59}, //raw beef packs
-            {id: 9978, quantity: 300, shop_price: 63}, //raw bird meat packs
-            {id: 3226, quantity: 100, shop_price: 67}, //raw rabbit packs
-        ]
-    },
-    "vial-of-water-packs": {task: "Vial of Water Packs", url: "https://runescape.wiki/w/Money_making_guide/Buying_vials_of_water", short: true,  desc: 'Normalized for 24 hours. +6 from Sigmund the Merchant',
-        outputs: [
-            {id: 227, quantity: 5300, shop_price: 10, multiplier: 0.367924528, label_override: 'Vial of Water (Packs@160hrs)'}, //vial of water packs respawn over 160 hours 24/160=0.4
-            {id: 221, quantity: 2000, shop_price: 3}, //eye of newt packs
-            {id: 48961, quantity: 200, shop_price: 5}, //bomb vial
-        ]
-    },
-    "yak-hide": {task: "Yak Hide", url: "https://runescape.wiki/w/Money_making_guide/Buying_yak-hide", short: true,
-        outputs: [
-            {id: 10818, quantity: 1000, shop_price: 50}, //yak-hide packs
-        ]
-    },
-    "bandit-duty-free": {task: "Bandit Duty Free", url: "https://runescape.wiki/w/Money_making_guide/Buying_construction_materials_from_Bandit_Duty_Free", short: true, desc: "Shop in the Wilderness, get skulled by Mr X first, slow resale on some items.",
-        outputs: [
-            {id: 13278, quantity: 3000, shop_price: 50}, //broad arrowheads
-            {id: 37952, quantity: 5, shop_price: 50000}, //bloodweed seeds
-            // {id: 29864, quantity: 5, shop_price: 450000}, //algarum thread
-            // {id: 8784, quantity: 5, shop_price: 117000}, //gold leaf
-            // {id: 28628, quantity: 5, shop_price: 450000}, //stone of binding
-            // {id: 8786, quantity: 5, shop_price: 292500}, //marble block
-            {id: 227, quantity: 300, shop_price: 10, label_override: 'Vial of Water Packs'}, //vial of water packs
         ]
     },
     "herb-run": {task: "Herb Run", url: "https://runescape.wiki/w/Money_making_guide/Farming_spirit_weed", short: true, desc: "Plant and gather your favorite herbs",
@@ -118,30 +81,6 @@ var rs3dailyshops = {
                 {id: 219, quantity: 69, shop_price: 0, inputs: {5304: 7, 43966: 7, 20011: 0.25}}, //Grimy torstol
                 {id: 14836, quantity: 69, shop_price: 0, inputs: {14870: 7, 43966: 7, 20011: 0.25}} //Grimy wergali
             ]
-        ]
-    },
-    "seaweed-and-pineapples": {task: "Seaweed and Pineapples", url: "https://runescape.wiki/w/Money_making_guide/Buying_seaweed_and_pineapples_from_Arhein", short: true,
-        outputs: [
-            {id: 401, quantity: 80, shop_price: 2}, //seaweed
-            {id: 2114, quantity: 40, shop_price: 2}, //pineapples
-        ]
-    },
-    "bert-sand": {task: "Sand from Bert", url: "https://runescape.wiki/w/Bert", short: true,
-        outputs: [
-            {id: 1783, quantity: 120, shop_price: 0}, //bucket of sand
-        ]
-    },
-    "dellmonti-pineapples": {task: "Pineapples and Apples from Dell Monti", url: "https://runescape.wiki/w/Dell_Monti", short: true,
-        outputs: [
-            {id: 2114, quantity: 40, shop_price: 0}, //pineapples
-            {id: 1955, quantity: 40, shop_price: 0}, //cooking apples
-        ]
-    },
-    "coeden-logs": {task: "Logs from Coeden", url: "https://runescape.wiki/w/Coeden", desc: "Average of combinations you could receive", short: true,
-        outputs: [
-            {id: 29556, quantity: 10, shop_price: 0}, //elder logs
-            {id: 1513, quantity: 9.142857143, shop_price: 0}, //magic logs
-            {id: 1515, quantity: 8.857142857, shop_price: 0}, //yew logs
         ]
     },
 };
@@ -173,6 +112,67 @@ var rs3weekly = {
 };
 
 var rs3weeklyshops = {
+    "feather-shop-run": {task: "Feather Shop Run", url: "https://runescape.wiki/w/Money_making_guide/Buying_feathers", short: true, desc: 'Normalized for 24 hours',
+        outputs: [
+            {id: 314, quantity: 42000, shop_price: 6}, //feathers
+            {id: 314, quantity: 385000, shop_price: 7.5}, //feather packs 
+            {id: 313, quantity: 9000, shop_price: 3}, //fishing bait
+        ]
+    },
+    "meat-packs": {task: "Meat Packs", url: "https://runescape.wiki/w/Money_making_guide/Buying_Meat_from_Oo%27glog", short: true, desc: "Only buy packs",
+        outputs: [
+            {id: 2132, quantity: 1350, shop_price: 59}, //raw beef packs
+            {id: 9978, quantity: 1350, shop_price: 63}, //raw bird meat packs
+            {id: 3226, quantity: 450, shop_price: 67}, //raw rabbit packs
+        ]
+    },
+    "vial-of-water-packs": {task: "Vial of Water Packs", url: "https://runescape.wiki/w/Money_making_guide/Buying_vials_of_water", short: true,  desc: 'Normalized for 24 hours. +6 from Sigmund the Merchant',
+        outputs: [
+            {id: 227, quantity: 35000, shop_price: 10}, //vial of water packs
+            {id: 221, quantity: 9000, shop_price: 3}, //eye of newt packs
+            {id: 48961, quantity: 900, shop_price: 5}, //bomb vial
+        ]
+    },
+    "yak-hide": {task: "Yak Hide", url: "https://runescape.wiki/w/Money_making_guide/Buying_yak-hide", short: true,
+        outputs: [
+            {id: 10818, quantity: 3500, shop_price: 50}, //yak-hide packs
+        ]
+    },
+    "bandit-duty-free": {task: "Bandit Duty Free", url: "https://runescape.wiki/w/Money_making_guide/Buying_construction_materials_from_Bandit_Duty_Free", short: true, desc: "Shop in the Wilderness, get skulled by Mr X first, slow resale on some items.",
+        outputs: [
+            {id: 13278, quantity: 21000, shop_price: 50}, //broad arrowheads
+            {id: 37952, quantity: 20, shop_price: 50000}, //bloodweed seeds
+            // {id: 29864, quantity: 20, shop_price: 450000}, //algarum thread
+            // {id: 8784, quantity: 20, shop_price: 117000}, //gold leaf
+            // {id: 28628, quantity: 20, shop_price: 450000}, //stone of binding
+            // {id: 8786, quantity: 20, shop_price: 292500}, //marble block
+            {id: 227, quantity: 1050, shop_price: 10, label_override: 'Vial of Water Packs'}, //vial of water packs
+        ]
+    },
+    "seaweed-and-pineapples": {task: "Seaweed and Pineapples", url: "https://runescape.wiki/w/Money_making_guide/Buying_seaweed_and_pineapples_from_Arhein", short: true,
+        outputs: [
+            {id: 401, quantity: 280, shop_price: 2}, //seaweed
+            {id: 2114, quantity: 140, shop_price: 2}, //pineapples
+        ]
+    },
+    "bert-sand": {task: "Sand from Bert", url: "https://runescape.wiki/w/Bert", short: true,
+        outputs: [
+            {id: 1783, quantity: 420, shop_price: 0}, //bucket of sand
+        ]
+    },
+    "dellmonti-pineapples": {task: "Pineapples and Apples from Dell Monti", url: "https://runescape.wiki/w/Dell_Monti", short: true,
+        outputs: [
+            {id: 2114, quantity: 140, shop_price: 0}, //pineapples
+            {id: 1955, quantity: 140, shop_price: 0}, //cooking apples
+        ]
+    },
+    "coeden-logs": {task: "Logs from Coeden", url: "https://runescape.wiki/w/Coeden", desc: "Average of combinations you could receive", short: true,
+        outputs: [
+            {id: 29556, quantity: 35, shop_price: 0}, //elder logs
+            {id: 1513, quantity: 32, shop_price: 0}, //magic logs
+            {id: 1515, quantity: 31, shop_price: 0}, //yew logs
+        ]
+    },
     "feathers-of-ma-at": {task: "Feathers of Ma'at", url: "https://runescape.wiki/w/Money_making_guide/Buying_feathers_of_Ma%27at", short: true, desc: "Weekly stock (7 days)",
         outputs: [
             {id: 40303, quantity: 7000, shop_price: 1500}, //feather of ma'at
