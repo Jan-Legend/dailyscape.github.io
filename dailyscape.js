@@ -12,7 +12,6 @@ var totalDailyProfit = 0; //global for total daily profit, maybe move this
 var totalWeeklyProfit = 0; //global for total weekly gathering profit
 
 var rs3daily = {
-    "traveling-merchant": {task: "Traveling Merchant", url: "https://runescape.wiki/w/Travelling_Merchant%27s_Shop", short: true, desc: "Buy rare items in deep sea fishing hub ('WhirlPoolDnD' FC)<span id=\"traveling-merchant-stock\"></span>"},
     "daily-challenge": {task: "Daily Challenge", url: "https://runescape.wiki/w/Challenge_System", short: true, desc: "Get xp"},
     "jack-of-trades": {task: "Jack of Trades", url: "https://runescape.wiki/w/Jack_of_trades_aura/Routines", short: true, desc: "Get xp in a range of skills to get an xp book"},
     "soul-reaper": {task: "Soul Reaper", url: "https://runescape.wiki/w/Soul_Reaper", desc: "Kill assigned bosses"},
@@ -20,24 +19,13 @@ var rs3daily = {
     "player-owned-farm": {task: "Player Owned Farm", url: "https://runescape.wiki/w/Player-owned_farm", short: true, desc: "Manage your player owned farm"},
     "crystal-tree-blossom": {task: "Crystal Tree Blossom", url: "https://runescape.wiki/w/Crystal_tree_blossom", short: true, desc: "Collect crystal tree blossom for perfect plus potions"},
     "invention-machine": {task: "Invention Machine", url: "https://runescape.wiki/w/Machines", short: true, desc: "Fill and collect from invention machines"},
-    "motherlode-maw": {task: "Motherlode Maw", url: "https://runescape.wiki/w/Motherlode_Maw", short: true, desc: "Receive treasure from motherlode maw.<br>Turn in 10 <a href=\"https://runescape.wiki/w/Crystal_motherlode_shard\" target=\"_blank\" rel=\"noreferrer noopener\">motherlode shards</a> to Wythien"},
-    "gorajo-card": {task: "Gorajo Card", url: "https://runescape.wiki/w/Gorajo_card", short: true, desc: "Consistent yak card gives a guaranteed Meilyr combination potion recipe"},
     "divine-locations": {task: "Divine Locations", url: "https://runescape.wiki/w/Divine_location", short: true, desc: "Gather resources from divine locations<br>Divine Yews best xp"},
     "archaeology-research": {task: "Archaeology Research", url: "https://runescape.wiki/w/Research", short: true, desc: "Use Chronotes to send out research teams for Arch XP and resources"},
-    "wilderness-warbands": {task: "Wilderness Warbands", url: "https://runescape.wiki/w/Wilderness_Warbands", short: true, desc: "Every 7 hours. Defeat invaders in the wilderness for xp or gp"},
     "nemi-forest": {task: "Nemi Forest", url: "https://runescape.wiki/w/Nemi_Forest", desc: "'NemiForest' FC. See also <a href=\"https://www.reddit.com/r/NemiForest/new/\" target=\"_blank\" rel=\"noreferrer noopener\">Daily Maps</a>"},
-    "guthixian-cache": {task: "Guthixian Cache", url: "https://runescape.wiki/w/Guthixian_Cache", desc: "Divination D&D"},
     "sinkholes": {task: "Sinkholes", url: "https://runescape.wiki/w/Sinkholes", desc: "Dungeoneering XP lamps and tokens, 2x a day"},
     "goebie-bands": {task: "Goebie Bands", url: "https://runescape.wiki/w/Supply_run", desc: "Supply Run"},
     "menaphos-obelisk": {task: "Menaphos Obelisk/Scarabs", url: "https://runescape.wiki/w/Soul_obelisk_(Menaphos)", desc: "'SoulObby' FC. Gain Menaphos reputation, also from <a href=\"https://runescape.wiki/w/Corrupted_Scarab_(Menaphos)\" target=\"_blank\" rel=\"noreferrer noopener\">corrupted scarabs</a>"},
     "big-chinchompa": {task: "Big Chinchompa", url: "https://runescape.wiki/w/Big_Chinchompa", desc: "Private hunting instances and hunter xp"},
-    "phoenix": {task: "Phoenix", url: "https://runescape.wiki/w/Phoenix_Lair", desc: "Baby phoenix pet"},
-    "liberation-of-mazcab": {task: "Liberation of Mazcab", url: "https://runescape.wiki/w/Liberation_of_Mazcab", desc: "Every 2 Days 'Raid FC' FC"},
-    "fish-flingers": {task: "Fish Flingers", url: "http://runescape.wiki/w/Fish_Flingers", desc: "2 entry tickets a day from fisherman"},
-    "evil-tree": {task: "Evil Tree", url: "http://runescape.wiki/w/Evil_Tree", desc: "Woodcutting, firemaking and farming xp and woodcutting buff. 2x a day"},
-    "shooting-star": {task: "Shooting Star", url: "http://runescape.wiki/w/Shooting_Star", desc: "Mining XP and double ore mining buff"},
-    "bork": {task: "Bork", url: "http://runescape.wiki/w/Bork", desc: "Slayer XP and summoning charms"},
-    "serenity-post": {task: "Serenity Posts", url: "https://runescape.wiki/w/Serenity_posts", desc: "20K agility XP, match poses to complete in 10ish minutes"},
     "fixate": {task: "Fixate Charges", url: "https://runescape.wiki/w/Fixate", desc: "Use x3 fixate charges for guaranteed artefacts e.g. <a href=\"https://runescape.wiki/w/Red_Rum_Relics_III\" target=\"_blank\" rel=\"noreferrer noopener\">Red Rum Relics III</a>"},
     "arc-contracts": {task: "Arc Contracts", url: "https://runescape.wiki/w/Contract", desc: "Complete up to 7 contracts in the Arc for chimes and xp<br>Deplete claimed island"},
     "rapid-growth": {task: "Rapid Growth", url: "https://runescape.wiki/w/Rapid_Growth", desc: "Make plants grow faster up to 2x a day",
@@ -53,98 +41,12 @@ var rs3daily = {
 };
 
 var rs3dailyshops = {
-    "rune-shop-run": {task: "Rune Shop Run", url: "https://runescape.wiki/w/Money_making_guide/Buying_runes", short: true,
-        outputs: [
-            {id: 554, quantity: 7500, shop_price: 17}, //fire rune
-            {id: 555, quantity: 7500, shop_price: 17}, //water rune
-            {id: 556, quantity: 7500, shop_price: 17}, //air rune
-            {id: 557, quantity: 7500, shop_price: 17}, //earth rune
-            {id: 558, quantity: 5700, shop_price: 17}, //mind rune
-            {id: 559, quantity: 4700, shop_price: 16}, //body rune
-            {id: 560, quantity: 1900, shop_price: 310}, //death rune
-            {id: 561, quantity: 1200, shop_price: 372}, //nature rune
-            {id: 562, quantity: 1800, shop_price: 140}, //chaos rune
-            {id: 563, quantity: 700, shop_price: 378}, //law rune
-            {id: 564, quantity: 400, shop_price: 232}, //cosmic rune
-            {id: 565, quantity: 400, shop_price: 550}, //blood rune
-            {id: 566, quantity: 300, shop_price: 410}, //soul rune
-            {id: 9075, quantity: 100, shop_price: 220}, //astral rune
-        ]
-    },
-    "vis-wax": {task: "Vis wax", url: "https://runescape.wiki/w/Rune_Goldberg_Machine", short: true, desc: "Profit from shop price and avg of combinations<br>See <a href=\"https://runescape.wiki/w/Calculator:Vis_wax\" target=\"_blank\" rel=\"noreferrer noopener\">Calculator:Vis wax</a>",
-        outputs: [
-            {id: 32092, quantity: 100, shop_price: 0}, //vis wax
-        ],
-        inputs: [
-            {id: 554, quantity: 150, shop_price: 17}, //fire rune
-            {id: 555, quantity: 150, shop_price: 17}, //water rune
-            {id: 556, quantity: 150, shop_price: 17}, //air rune
-            {id: 557, quantity: 150, shop_price: 17}, //earth rune
-            {id: 558, quantity: 300, shop_price: 17}, //mind rune
-            {id: 559, quantity: 300, shop_price: 16}, //body rune
-            {id: 560, quantity: 60, shop_price: 310}, //death rune
-            {id: 561, quantity: 52.5, shop_price: 372}, //nature rune
-            {id: 562, quantity: 75, shop_price: 140}, //chaos rune
-            {id: 563, quantity: 45, shop_price: 378}, //law rune
-            {id: 564, quantity: 60, shop_price: 232}, //cosmic rune
-            {id: 565, quantity: 52.5, shop_price: 550}, //blood rune
-            {id: 566, quantity: 45, shop_price: 410}, //soul rune
-            {id: 4694, quantity: 75}, //steam rune
-            {id: 4695, quantity: 75}, //mist rune
-            {id: 4696, quantity: 75}, //dust rune
-            {id: 4697, quantity: 75}, //smoke rune
-            {id: 4698, quantity: 45}, //mud rune
-            {id: 4699, quantity: 75}, //lava rune
-            {id: 9075, quantity: 45, shop_price: 220}, //astral rune
-        ]
-    },
-    "feathers-of-ma-at": {task: "Feathers of Ma'at", url: "https://runescape.wiki/w/Money_making_guide/Buying_feathers_of_Ma%27at", short: true,
-        outputs: [
-            {id: 40303, quantity: 1000, shop_price: 1500}, //feather of ma'at
-        ]
-    },
     "bloodwood-tree": {task: "Bak Bolts", url: "https://runescape.wiki/w/Money_making_guide/Fletching_bakriminel_bolts", desc: "Fletch bakriminel bolts. Every 6H",
         outputs: [
             {id: 24116, quantity: 1500, shop_price: 0}, //bakriminel bolts
         ],
         inputs: [
             {id: 24127, quantity: 1500, shop_price: 200}, //bakriminel bolt tips
-        ]
-    },
-    "wicked-hood-runes": {task: "Wicked Hood Runes", url: "https://runescape.wiki/w/Wicked_hood", short: true, desc: "Teleport for Vis. Profits based on 99 RC and fully upgraded hood, see <a href=\"https://runescape.wiki/w/Wicked_hood#Runecrafting\" target=\"_blank\" rel=\"noreferrer noopener\">crafting profitability table</a>",
-        outputs_max: [
-            [   // Withdraw from hood
-                {id: 554, quantity: 500, shop_price: 0}, //fire rune
-                {id: 555, quantity: 500, shop_price: 0}, //water rune
-                {id: 556, quantity: 500, shop_price: 0}, //air rune
-                {id: 557, quantity: 500, shop_price: 0}, //earth rune
-                {id: 558, quantity: 500, shop_price: 0}, //mind rune
-                {id: 559, quantity: 500, shop_price: 0}, //body rune
-                {id: 560, quantity: 25, shop_price: 0}, //death rune
-                {id: 561, quantity: 25, shop_price: 0}, //nature rune
-                {id: 562, quantity: 25, shop_price: 0}, //chaos rune
-                {id: 563, quantity: 25, shop_price: 0}, //law rune
-                {id: 564, quantity: 25, shop_price: 0}, //cosmic rune
-                {id: 565, quantity: 25, shop_price: 0}, //blood rune
-                {id: 566, quantity: 25, shop_price: 0}, //soul rune
-                {id: 9075, quantity: 25, shop_price: 0}, //astral rune
-            ],
-            [   // Craft from pure essence
-                {id: 554, quantity: 750, shop_price: 0}, //fire rune
-                {id: 555, quantity: 1400, shop_price: 0}, //water rune
-                {id: 556, quantity: 1800, shop_price: 0}, //air rune
-                {id: 557, quantity: 900, shop_price: 0}, //earth rune
-                {id: 558, quantity: 1200, shop_price: 0}, //mind rune
-                {id: 559, quantity: 450, shop_price: 0}, //body rune
-                {id: 560, quantity: 150, shop_price: 0}, //death rune
-                {id: 561, quantity: 300, shop_price: 0}, //nature rune
-                {id: 562, quantity: 300, shop_price: 0}, //chaos rune
-                {id: 563, quantity: 150, shop_price: 0}, //law rune
-                {id: 564, quantity: 300, shop_price: 0}, //cosmic rune
-                {id: 565, quantity: 150, shop_price: 0}, //blood rune
-                {id: 566, quantity: 30, shop_price: 0}, //soul rune
-                {id: 9075, quantity: 350, shop_price: 0}, //astral rune
-            ],
         ]
     },
     "feather-shop-run": {task: "Feather Shop Run", url: "https://runescape.wiki/w/Money_making_guide/Buying_feathers", short: true, desc: 'Normalized for 24 hours',
@@ -161,16 +63,6 @@ var rs3dailyshops = {
         ],
         inputs: [
             {id: -1, quantity: 1, shop_price: 37500}, //kingdom upkeep
-        ]
-    },
-    "sand-stone": {task: "Sand Stone", url: "https://runescape.wiki/w/Red_sandstone", short: true, desc: "Accumulate sandstone for Blessed Flask",
-        outputs: [
-            {id: 23191, quantity: 50, shop_price: 0}, //potion flask
-        ]
-    },
-    "crystal-sand-stone": {task: "Crystal Sand Stone", url: "https://runescape.wiki/w/Crystal-flecked_sandstone", short: true, desc: "Accumulate sandstone for Blessed Flask",
-        outputs: [
-            {id: 32843, quantity: 50, shop_price: 0}, //crystal flask
         ]
     },
     "meat-packs-from-oo-glog": {task: "Meat Packs from Oo'glog", url: "https://runescape.wiki/w/Money_making_guide/Buying_Meat_from_Oo%27glog", short: true, desc: "Only buy packs",
@@ -190,11 +82,6 @@ var rs3dailyshops = {
     "yak-hide": {task: "Yak Hide", url: "https://runescape.wiki/w/Money_making_guide/Buying_yak-hide", short: true,
         outputs: [
             {id: 10818, quantity: 1000, shop_price: 50}, //yak-hide packs
-        ]
-    },
-    "broad-arrowheads": {task: "Broad Arrowheads", url: "https://runescape.wiki/w/Money_making_guide/Buying_broad_arrowheads", short: true, desc: "Taverly + Any other Slayer Master (e.g. Lumby)",
-        outputs: [
-            {id: 13278, quantity: 6000, shop_price: 50}, //broad arrowheads
         ]
     },
     "bandit-duty-free": {task: "Bandit Duty Free", url: "https://runescape.wiki/w/Money_making_guide/Buying_construction_materials_from_Bandit_Duty_Free", short: true, desc: "Shop in the Wilderness, get skulled by Mr X first, slow resale on some items.",
@@ -244,30 +131,10 @@ var rs3dailyshops = {
             {id: 1783, quantity: 120, shop_price: 0}, //bucket of sand
         ]
     },
-    "oldman-potato-cactus": {task: "Potato Cactus from Weird Old Man", url: "https://runescape.wiki/w/Weird_Old_Man", short: true,
-        outputs: [
-            {id: 3138, quantity: 40, shop_price: 0}, //potato cactus
-        ]
-    },
-    "razmire-planks": {task: "Planks from Razmire", url: "https://runescape.wiki/w/Razmire_Keelgan", desc: "30 noted planks, other items at this shop might not sell quickly", short: true,
-        outputs: [
-            {id: 960, quantity: 30, shop_price: 0}, //plank
-        ]
-    },
-    "geoffrey-flax": {task: "Flax from Geoffrey", url: "https://runescape.wiki/w/Geoffrey", short: true,
-        outputs: [
-            {id: 1779, quantity: 200, shop_price: 0}, //flax
-        ]
-    },
     "dellmonti-pineapples": {task: "Pineapples and Apples from Dell Monti", url: "https://runescape.wiki/w/Dell_Monti", short: true,
         outputs: [
             {id: 2114, quantity: 40, shop_price: 0}, //pineapples
             {id: 1955, quantity: 40, shop_price: 0}, //cooking apples
-        ]
-    },
-    "cromperty-pure-essence": {task: "Pure Essence from Wizard Cromperty", url: "https://runescape.wiki/w/Wizard_Cromperty", short: true,
-        outputs: [
-            {id: 7936, quantity: 150, shop_price: 0}, //pure essence
         ]
     },
     "coeden-logs": {task: "Logs from Coeden", url: "https://runescape.wiki/w/Coeden", desc: "Average of combinations you could receive", short: true,
@@ -275,18 +142,6 @@ var rs3dailyshops = {
             {id: 29556, quantity: 10, shop_price: 0}, //elder logs
             {id: 1513, quantity: 9.142857143, shop_price: 0}, //magic logs
             {id: 1515, quantity: 8.857142857, shop_price: 0}, //yew logs
-        ]
-    },
-    "modified-skilling-helms": {task: "Modified Skilling Helms", url: "http://runescape.wiki/w/Category:Modified_skill_helms", desc: "Collect resources from upgraded skilling outfit helms", short: true,
-        outputs: [
-            {id: 1761, quantity: 35, shop_price: 0, label_override: "Soft clay from Artisan's bandana"}, //soft clay
-            {id: 453, quantity: 50, shop_price: 0, label_override: "Coal from Blacksmith's helmet"}, //coal
-            {id: 227, quantity: 200, shop_price: 0, label_override: "Vials of Water from Botanist's mask"}, //vial of water
-            {id: 29293, quantity: 3, shop_price: 0, label_override: "Chronical fragments from Diviner's headwear"}, //chronicle fragment
-            {id: 7413, quantity: 2, shop_price: 0, label_override: "Bird's nests from Master farmer's hat"}, //bird's nest
-            {id: 453, quantity: 3, shop_price: 0, label_override: "Dragon bones from First age tiara"}, //dragon bones
-            {id: 12183, quantity: 500, shop_price: 0, label_override: "Spirit shards from Shaman's headdress"}, //spirit shard
-            {id: 2315, quantity: 10, shop_price: 0, label_override: "Pie shells from Sous chef's toque"}, //pie shells
         ]
     },
 };
@@ -315,6 +170,59 @@ var rs3weekly = {
     "dream-of-iaia-resource": {task: "Dream of Iaia Resources", url: "https://runescape.wiki/w/Dream_of_Iaia", desc: "Convert resources to skilling stations at a rate of 2 resource to 1 xp"},
     "gwd2-bounties": {task: "GWD2 Bounties", url: "https://runescape.wiki/w/Feng,_the_Bounty_Master", desc: "Up to 5 bounties can be stored for GWD2 reputation"},
     "fort-forinthry-bonus-xp": {task: "Fort Forinthry Bonus XP", url: "https://runescape.wiki/w/Town_Hall_(Fort_Forinthry)", desc:"Receive up to 15 small stars worth of bonus xp"},
+};
+
+var rs3weeklyshops = {
+    "feathers-of-ma-at": {task: "Feathers of Ma'at", url: "https://runescape.wiki/w/Money_making_guide/Buying_feathers_of_Ma%27at", short: true, desc: "Weekly stock (7 days)",
+        outputs: [
+            {id: 40303, quantity: 7000, shop_price: 1500}, //feather of ma'at
+        ]
+    },
+    "broad-arrowheads": {task: "Broad Arrowheads", url: "https://runescape.wiki/w/Money_making_guide/Buying_broad_arrowheads", short: true, desc: "Weekly stock (7 days). Taverly + Any other Slayer Master (e.g. Lumby)",
+        outputs: [
+            {id: 13278, quantity: 42000, shop_price: 50}, //broad arrowheads
+        ]
+    },
+    "oldman-potato-cactus": {task: "Potato Cactus from Weird Old Man", url: "https://runescape.wiki/w/Weird_Old_Man", short: true, desc: "Weekly stock (7 days)",
+        outputs: [
+            {id: 3138, quantity: 280, shop_price: 0}, //potato cactus
+        ]
+    },
+    "razmire-planks": {task: "Planks from Razmire", url: "https://runescape.wiki/w/Razmire_Keelgan", desc: "Weekly stock (7 days). 30 noted planks, other items at this shop might not sell quickly", short: true,
+        outputs: [
+            {id: 960, quantity: 210, shop_price: 0}, //plank
+            {id: 8778, quantity: 210, shop_price: 0}, //oak plank
+            {id: 8780, quantity: 210, shop_price: 0}, //teak plank
+        ]
+    },
+    "geoffrey-flax": {task: "Flax from Geoffrey", url: "https://runescape.wiki/w/Geoffrey", short: true, desc: "Weekly stock (7 days)",
+        outputs: [
+            {id: 1779, quantity: 1400, shop_price: 0}, //flax
+        ]
+    },
+    "cromperty-pure-essence": {task: "Pure Essence from Wizard Cromperty", url: "https://runescape.wiki/w/Wizard_Cromperty", short: true, desc: "Weekly stock (7 days)",
+        outputs: [
+            {id: 7936, quantity: 1050, shop_price: 0}, //pure essence
+        ]
+    },
+    "rune-shop-run": {task: "Rune Shop Run", url: "https://runescape.wiki/w/Money_making_guide/Buying_runes", short: true, desc: "Weekly stock (7 days)",
+        outputs: [
+            {id: 554, quantity: 52500, shop_price: 17}, //fire rune
+            {id: 555, quantity: 52500, shop_price: 17}, //water rune
+            {id: 556, quantity: 52500, shop_price: 17}, //air rune
+            {id: 557, quantity: 52500, shop_price: 17}, //earth rune
+            {id: 558, quantity: 39900, shop_price: 17}, //mind rune
+            {id: 559, quantity: 32900, shop_price: 16}, //body rune
+            {id: 560, quantity: 13300, shop_price: 310}, //death rune
+            {id: 561, quantity: 8400, shop_price: 372}, //nature rune
+            {id: 562, quantity: 12600, shop_price: 140}, //chaos rune
+            {id: 563, quantity: 4900, shop_price: 378}, //law rune
+            {id: 564, quantity: 2800, shop_price: 232}, //cosmic rune
+            {id: 565, quantity: 2800, shop_price: 550}, //blood rune
+            {id: 566, quantity: 2100, shop_price: 410}, //soul rune
+            {id: 9075, quantity: 700, shop_price: 220}, //astral rune
+        ]
+    },
 };
 
 var rs3monthly = {
@@ -625,6 +533,10 @@ const updateShowHiddenButton = function(timeFrame) {
 
 const showHiddenButton = function(timeFrame) {
     let showButton = document.getElementById(timeFrame + '_show_hidden_button');
+    if (!showButton) {
+        return;
+    }
+
     showButton.addEventListener('click', function() {
         let tableContainer = document.querySelector('div.' + timeFrame + '_table');
         tableContainer.dataset.showHidden = tableContainer.dataset.showHidden === 'true' ? 'false' : 'true';
@@ -644,6 +556,10 @@ const populateTable = function(timeFrame) {
 
     const sampleRow = document.querySelector('#sample_row');
     const table = document.getElementById(timeFrame + '_table');
+    if (!sampleRow || !table) {
+        return;
+    }
+
     const tbody = table.querySelector('tbody');
 
     //Hidden table
@@ -707,7 +623,8 @@ const populateTable = function(timeFrame) {
 
                 if (!!data[taskSlug].inputs) {
                     for (let input of data[taskSlug].inputs) {
-                        totalInputPrice += input.quantity * (input.shop_price ?? parseInt(String(rsapidata[input.id].price).replace(/\D/g, ''), 10));
+                        let inputApiData = rsapidata[input.id] ?? {price: 0};
+                        totalInputPrice += input.quantity * (input.shop_price ?? parseInt(String(inputApiData.price).replace(/\D/g, ''), 10));
                     }
                 }
 
@@ -754,7 +671,7 @@ const populateTable = function(timeFrame) {
                 }
 
                 for (let item of buyItems) {
-                    let itemApiData = rsapidata[item.id];
+                    let itemApiData = rsapidata[item.id] ?? {name: 'Unknown item #' + item.id};
                     let itemInputData = !!item.inputs ? ' data-inputs="' + encodeURIComponent(JSON.stringify(item.inputs)) + '"' : '';
 
                     newRowColor.innerHTML += '<div class="item_output" data-item_id="' + item.id + '" data-shop_price="' + item.shop_price + '"' + itemInputData + '>'
@@ -766,7 +683,7 @@ const populateTable = function(timeFrame) {
                 if (skipItems.length > 0) {
                     newRowColor.innerHTML += '<br>Skip:<br>'
                     for (let item of skipItems) {
-                        let itemApiData = rsapidata[item.id];
+                        let itemApiData = rsapidata[item.id] ?? {name: 'Unknown item #' + item.id};
                         newRowColor.innerHTML += '<div class="item_output" data-item_id="' + item.id + '" data-shop_price="' + item.shop_price + '">'
                                                 + '<img class="item_icon" src="/rsdata/images/' + item.id + '.gif">'
                                                 + (!!item.label_override ? item.label_override : itemApiData.name) + ' x' + item.quantity.toLocaleString() + ' (' + item.profit.toLocaleString() + ')'
@@ -777,7 +694,7 @@ const populateTable = function(timeFrame) {
                 //entries with only inputs and no outputs for display purposes
                 newRowColor.innerHTML = data[taskSlug].desc;
                 for (let item of data[taskSlug].inputs) {
-                    let itemApiData = rsapidata[item.id];
+                    let itemApiData = rsapidata[item.id] ?? {name: 'Unknown item #' + item.id};
                     let itemInputData = !!item.inputs ? ' data-inputs="' + encodeURIComponent(JSON.stringify(item.inputs)) + '"' : '';
 
                     newRowColor.innerHTML += '<div class="item_output" data-item_id="' + item.id + '" data-shop_price="' + item.shop_price + '"' + itemInputData + '>'
@@ -787,15 +704,7 @@ const populateTable = function(timeFrame) {
                 }
 
             } else if (!!data[taskSlug].desc) {
-                //@todo lazy hack for getting warbands timer to display for compact mode
-                if (taskSlug == 'wilderness-warbands') {
-                    let profitSpan = newRowColor.parentNode.insertBefore(document.createElement('span'), newRowColor);
-                    profitSpan.classList.add('item_profit');
-                    profitSpan.innerHTML = '<span class="item_profit_label">Next Warbands: </span><span id=\"warbands-countdown\"></span>';
-                    newRowColor.innerHTML = '<br>' + data[taskSlug].desc;
-                } else {
-                    newRowColor.innerHTML = data[taskSlug].desc;
-                }
+                newRowColor.innerHTML = data[taskSlug].desc;
             }
         } else {
             newRowAnchor.innerHTML = data[taskSlug].task;
@@ -868,13 +777,13 @@ const calcOutputs = function(outputArray, totalInputPrice, method='sum') {
             item.quantity *= item.multiplier;
         }
 
-        let itemCost = totalInputPrice > 0 ? totalInputPrice : item.quantity * (item.shop_price ?? parseInt(String(rsapidata[item.id].price).replace(/\D/g, ''), 10));
+        let itemCost = totalInputPrice > 0 ? totalInputPrice : item.quantity * (item.shop_price ?? parseInt(String(itemApiData.price).replace(/\D/g, ''), 10));
         item.profit = Math.round((item.quantity * itemPrice) - itemCost);
 
         if (method == 'max') {
             if ((!!item.inputs)) {
                 for (let inputkey in item.inputs) {
-                    let inputItemData = rsapidata[inputkey];
+                    let inputItemData = rsapidata[inputkey] ?? {price: 0};
                     item.profit = Math.round(item.profit - Math.round(item.inputs[inputkey] * inputItemData.price));
                 }
             }
@@ -1196,6 +1105,10 @@ const resettableSection = function(timeFrame) {
  */
 const hidableSection = function(timeFrame) {
     let hideButton = document.querySelector('#' + timeFrame + '_hide_button');
+    if (!hideButton) {
+        return;
+    }
+
     hideButton.addEventListener('click', function () {
         let hideTable = document.querySelector('div.' + timeFrame + '_table');
         hideTable.dataset.hide = 'hide';
@@ -1209,10 +1122,14 @@ const hidableSection = function(timeFrame) {
     };
 
     let navLink = document.querySelector('#' + timeFrame + '_nav');
-    navLink.addEventListener('click', unhideTable);
+    if (!!navLink) {
+        navLink.addEventListener('click', unhideTable);
+    }
 
     let unhideButton = document.querySelector('#' + timeFrame + '_unhide_button');
-    unhideButton.addEventListener('click', unhideTable);
+    if (!!unhideButton) {
+        unhideButton.addEventListener('click', unhideTable);
+    }
 };
 
 /**
@@ -1290,127 +1207,7 @@ const countDown = function(timeFrame) {
         Math.floor(remainingtime % 60) //s
     ];
 
-    document.getElementById('countdown-' + timeFrame).innerHTML = (timeparts[0] > 0 ? (timeparts[0] + 'd ') : '') + (timeparts[1] > 0 ? (timeparts[1] + 'h ') : '') + timeparts[2] + 'm ' + timeparts[3] + 's';
-};
-
-/**
- * Starts at Thursday 0 UTC +7 hours each interval
- * @see https://runescape.wiki/w/Wilderness_Warbands#Timing
- */
-const warbandsCounter = function() {
-    let warbandsData = storage.getItem(profilePrefix + 'wilderness-warbands') ?? 'false';
-
-    if (warbandsData !== 'hide') {
-
-        let nowtime = new Date();
-        var daysAfterLastThursday = (-7 + 4) - nowtime.getUTCDay();
-
-        let lastThursday = new Date();
-        lastThursday.setUTCDate(nowtime.getUTCDate() + daysAfterLastThursday);
-        lastThursday.setUTCHours(0);
-        lastThursday.setUTCMinutes(0);
-        lastThursday.setUTCSeconds(0);
-
-        let elapsedTime = (nowtime.getTime() - lastThursday.getTime()) / 1000 / 60 / 60;
-        let elapsedIntervals = Math.floor(elapsedTime / 7);
-
-        //get time of number of intervals + 1
-        let nextWarbands = new Date();
-        nextWarbands.setTime(lastThursday.getTime() + (elapsedIntervals + 1) * 7 * 60 * 60 * 1000);
-        let remainingtime = (nextWarbands.getTime() - nowtime.getTime()) / 1000;
-
-        //countdown with the diff
-        let timeparts = [
-            Math.floor(remainingtime / 86400), //d
-            Math.floor(remainingtime % 86400 / 3600), //h
-            Math.floor(remainingtime % 3600 / 60), //m
-            Math.floor(remainingtime % 60) //s
-        ];
-
-        document.getElementById('warbands-countdown').innerHTML = (timeparts[0] > 0 ? (timeparts[0] + 'd ') : '') + (timeparts[1] > 0 ? (timeparts[1] + 'h ') : '') + timeparts[2] + 'm ' + timeparts[3] + 's';
-    }
-};
-
-/**
- * Determine current merchant stock and output to specific element
- * @see https://runescape.wiki/w/Module:Rotations/Merchant
- */
- const merchantStock = function() {
-    var merchantitems = {
-        42274: {name: "Uncharted island map", shop_price: 800000},
-
-        34918: {name: "Advanced pulse core", shop_price: 800000},
-        36918: {name: "Anima crystal", shop_price: 150000},
-        42283: {name: "Barrel of bait", shop_price: 50000},
-        42284: {name: "Broken fishing rod", shop_price: 50000},
-        27234: {name: "D&D reset token (daily)", shop_price: 250000},
-        41035: {name: "Gift for the Reaper", shop_price: 1250000},
-        35203: {name: "Goebie burial charm", shop_price: 100000},
-        42290: {name: "Livid plant", shop_price: 1000000},
-        40304: {name: "Menaphite gift (small)", shop_price: 100000},
-        40306: {name: "Menaphite gift (medium)", shop_price: 300000},
-        42289: {name: "Sacred clay", shop_price: 600000},
-        40150: {name: "Shattered anima", shop_price: 750000},
-        34823: {name: "Silverhawk down", shop_price: 1500000},
-        41036: {name: "Slayer VIP Coupon", shop_price: 200000},
-        35202: {name: "Small goebie burial charm", shop_price: 50000},
-        42285: {name: "Tangled fishbowl", shop_price: 50000},
-        32708: {name: "Unfocused damage enhancer", shop_price: 500000},
-        41034: {name: "Unstable air rune", shop_price: 250000},
-        54109: {name: "Horn of honour", shop_price: 1000000},
-
-        28550: {name: "Crystal triskelion", shop_price: 2000000},
-        25202: {name: "Deathtouched dart", shop_price: 5000000},
-        27236: {name: "D&D reset token (monthly)", shop_price: 1000000},
-        27235: {name: "D&D reset token (weekly)", shop_price: 400000},
-        18782: {name: "Dragonkin lamp", shop_price: 250000},
-        35575: {name: "Dungeoneering Wildcard", shop_price: 400000},
-        32622: {name: "Harmonic dust", shop_price: 2000000},
-        35204: {name: "Large goebie burial charm", shop_price: 150000},
-        40308: {name: "Menaphite gift (large)", shop_price: 500000},
-        42282: {name: "Message in a bottle", shop_price: 200000},
-        18778: {name: "Starved ancient effigy", shop_price: 1000000},
-        37758: {name: "Taijitu", shop_price: 800000},
-        32716: {name: "Unfocused reward enhancer", shop_price: 10000000},
-    }
-
-    let slotABMap = [41035,42284,42283,36918,35202,35203,40304,40306,40150,27234,42289,42290,41036,34823,41034,34918,42285,32708,54109];
-    let slotCMap = [37758,35204,40308,27235,27236,35575,42282,28550,18778,25202,18782,32622,32716];
-    let runedate = Math.floor(((new Date() / 1000) - 1014768000) / 86400); // Days since 2002/02/27
-
-    function avoidLimit(num) {
-        let multi = [0, 2, 3, 5, 6, 9, 10, 13, 14, 15, 18, 19, 21, 22, 23, 25, 26, 27, 28, 30, 31, 32, 34];
-        let out = 0;
-        let mask = Math.pow(2, 48);
-        for (let i = 0; i <= 35; i++) {
-            if (multi.includes(i)) {
-                out = (out + num) % mask;
-            }
-            num = (num * 2) % mask;
-        }
-        return out;
-    }
-
-    function slotIndex(runedate, k, n) {
-        // Need to use BigInts through this method otherwise JS will treat numbers as 32bit whilst doing bitwise operations, which results in the wrong output
-        let seed = (BigInt(runedate) << 32n) + (BigInt(runedate) % k);
-        let multiplier = 25214903917n;
-        let mask = 281474976710655n;
-        seed = (seed ^ multiplier) & mask;
-        seed = BigInt(avoidLimit(Number(seed)));
-        seed = (seed + 11n) & mask;
-        return (seed >> 17n) % n;
-    }
-
-    let slotA = slotABMap[slotIndex(runedate, 3n, 19n)];
-    let slotB = slotABMap[slotIndex(runedate, 8n, 19n)];
-    let slotC = slotCMap[slotIndex(runedate, 5n, 13n)];
-
-    const outputElement = document.getElementById('traveling-merchant-stock');
-    outputElement.innerHTML = '<br><strong>Current stock:</strong><br>';
-    outputElement.innerHTML += '<img class="item_icon" src="/rsdata/images/' + slotA + '.gif"> ' + merchantitems[slotA].name + '<br>';
-    outputElement.innerHTML += '<img class="item_icon" src="/rsdata/images/' + slotB + '.gif"> ' + merchantitems[slotB].name + '<br>';
-    outputElement.innerHTML += '<img class="item_icon" src="/rsdata/images/' + slotC + '.gif"> ' + merchantitems[slotC].name;
+    countdownTarget.innerHTML = (timeparts[0] > 0 ? (timeparts[0] + 'd ') : '') + (timeparts[1] > 0 ? (timeparts[1] + 'h ') : '') + timeparts[2] + 'm ' + timeparts[3] + 's';
 };
 
 /**
@@ -1419,6 +1216,10 @@ const warbandsCounter = function() {
  */
 const dndOfTheWeek = function() {
     const outputElement = document.getElementById('dnd-of-the-week');
+
+    if (!outputElement) {
+        return;
+    }
 
     const dndRotation = ['Evil Tree', 'Shooting Star', 'Penguin Hide and Seek', 'Circus'];
 
@@ -1829,8 +1630,6 @@ window.onload = function() {
     sortButton('rs3dailyshops');
     sortButton('rs3weeklyshops');
     itemStatsTooltip();
-    warbandsCounter();
-    merchantStock();
     dndOfTheWeek();
     importExportModal();
 
@@ -1839,8 +1638,6 @@ window.onload = function() {
             checkReset(timeFrame);
             countDown(timeFrame);
         }
-
-        warbandsCounter();
     }, 1000);
 
     setInterval(function() {
