@@ -755,6 +755,12 @@ const tableEventListeners = function() {
     for (let colorCell of rowsColor) {
         colorCell.addEventListener('click', function () {
             let thisRow = this.closest('tr');
+
+            // Temporarily shown hidden rows should not be completable.
+            if (thisRow.dataset.completed === 'hide') {
+                return;
+            }
+
             let thisTimeframe = thisRow.dataset.timeframe;
             let taskSlug = thisRow.dataset.task;
             let newState = (thisRow.dataset.completed === 'true') ? 'false' : 'true'

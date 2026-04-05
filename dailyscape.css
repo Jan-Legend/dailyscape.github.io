@@ -261,6 +261,7 @@ div.table_container:not([data-show-hidden="true"]) .activity_table tr[data-compl
 div.table_container[data-show-hidden="true"] .activity_table tr[data-completed="hide"] .activity_color {
     background-color: #4a3a08;
     box-shadow: inset 0 0 0 9999px #4a3a08;
+    cursor: not-allowed;
 }
 
 div.table_container[data-show-hidden="true"] .activity_table tr:hover[data-completed="hide"] .activity_color {
