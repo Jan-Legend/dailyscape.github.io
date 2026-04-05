@@ -1,12 +1,15 @@
 const storage = window.localStorage;
 
-const timeframes = ['rs3daily', 'rs3dailyshops', 'rs3weekly', 'rs3monthly'];
+const timeframes = ['rs3daily', 'rs3dailyshops', 'rs3weekly', 'rs3weeklyshops', 'rs3monthly'];
 const sectionLayoutStorageKey = 'section-layout';
+const splitDailyTablesStorageKey = 'split-daily-tables';
+const splitWeeklyTablesStorageKey = 'split-weekly-tables';
 var currentProfile = 'default';
 var currentLayout = 'default';
 var profilePrefix = '';
 var dragRow; //global for currently dragged row
 var totalDailyProfit = 0; //global for total daily profit, maybe move this
+var totalWeeklyProfit = 0; //global for total weekly gathering profit
 
 var rs3daily = {
     "traveling-merchant": {task: "Traveling Merchant", url: "https://runescape.wiki/w/Travelling_Merchant%27s_Shop", short: true, desc: "Buy rare items in deep sea fishing hub ('WhirlPoolDnD' FC)<span id=\"traveling-merchant-stock\"></span>"},
@@ -323,12 +326,36 @@ var rs3monthly = {
     "dream-of-iaia-xp": {task: "Dream of Iaia XP", url: "https://runescape.wiki/w/Dream_of_Iaia", desc: "Use up stored xp in skilling stations"},
 };
 
+const isSplitDailyTablesEnabled = function() {
+    return (storage.getItem(profilePrefix + splitDailyTablesStorageKey) ?? 'true') !== 'false';
+};
+
+const isSplitWeeklyTablesEnabled = function() {
+    return (storage.getItem(profilePrefix + splitWeeklyTablesStorageKey) ?? 'false') === 'true';
+};
+
 const getSectionLayoutKey = function() {
-    return profilePrefix + sectionLayoutStorageKey;
+    let dailyLayoutMode = isSplitDailyTablesEnabled() ? 'split' : 'combined';
+    let weeklyLayoutMode = isSplitWeeklyTablesEnabled() ? 'split' : 'combined';
+    return profilePrefix + sectionLayoutStorageKey + '-daily-' + dailyLayoutMode + '-weekly-' + weeklyLayoutMode;
 };
 
 const getStoredSectionLayout = function() {
     let storedLayout = storage.getItem(getSectionLayoutKey());
+
+    if (!storedLayout) {
+        // Preserve existing user row order from older key formats.
+        let dailyLayoutMode = isSplitDailyTablesEnabled() ? 'split' : 'combined';
+        storedLayout = storage.getItem(profilePrefix + sectionLayoutStorageKey + '-' + dailyLayoutMode);
+
+        if (!storedLayout && isSplitDailyTablesEnabled()) {
+            storedLayout = storage.getItem(profilePrefix + sectionLayoutStorageKey);
+        }
+
+        if (!!storedLayout) {
+            storage.setItem(getSectionLayoutKey(), storedLayout);
+        }
+    }
 
     if (!storedLayout) {
         return {};
@@ -346,8 +373,25 @@ const saveSectionLayout = function() {
     let sectionLayout = {};
 
     for (let timeFrame of timeframes) {
-        let tbody = document.querySelector('#' + timeFrame + '_table tbody');
-        sectionLayout[timeFrame] = Array.from(tbody.querySelectorAll('tr')).map((row) => row.dataset.task);
+        sectionLayout[timeFrame] = [];
+    }
+
+    let allRows = document.querySelectorAll('.activity_table tbody tr');
+
+    for (let row of allRows) {
+        let layoutTimeframe = row.dataset.timeframe;
+
+        if (!isSplitDailyTablesEnabled() && layoutTimeframe === 'rs3dailyshops') {
+            layoutTimeframe = 'rs3daily';
+        }
+
+        if (!isSplitWeeklyTablesEnabled() && layoutTimeframe === 'rs3weeklyshops') {
+            layoutTimeframe = 'rs3weekly';
+        }
+
+        if (sectionLayout[layoutTimeframe] && !sectionLayout[layoutTimeframe].includes(row.dataset.task)) {
+            sectionLayout[layoutTimeframe].push(row.dataset.task);
+        }
     }
 
     storage.setItem(getSectionLayoutKey(), JSON.stringify(sectionLayout));
@@ -404,8 +448,8 @@ const clearDragState = function() {
     }
 };
 
-const updateDailyProfitDisplay = function(delta) {
-    let totalProfitElement = document.getElementById('rs3dailyshops_totalprofit');
+const updateProfitDisplay = function(timeFrame, delta) {
+    let totalProfitElement = document.getElementById(timeFrame + '_totalprofit');
 
     if (!totalProfitElement) {
         return;
@@ -414,6 +458,102 @@ const updateDailyProfitDisplay = function(delta) {
     let totalProfitNumber = parseInt(String(totalProfitElement.textContent).replace(/\D/g, ''), 10) || 0;
     let newProfit = totalProfitNumber + delta;
     totalProfitElement.innerHTML = 'Total Profit: <strong>' + newProfit.toLocaleString() + '</strong><span class="coin">●</span>';
+};
+
+const updateDailyProfitDisplay = function(delta) {
+    updateProfitDisplay('rs3dailyshops', delta);
+    syncCombinedDailyProfitDisplay();
+};
+
+const updateWeeklyProfitDisplay = function(delta) {
+    updateProfitDisplay('rs3weeklyshops', delta);
+    syncCombinedWeeklyProfitDisplay();
+};
+
+const syncCombinedDailyProfitDisplay = function() {
+    let sourceProfitElement = document.getElementById('rs3dailyshops_totalprofit');
+    let targetProfitElement = document.getElementById('rs3daily_totalprofit');
+
+    if (!sourceProfitElement || !targetProfitElement) {
+        return;
+    }
+
+    if (isSplitDailyTablesEnabled()) {
+        targetProfitElement.innerHTML = '';
+        return;
+    }
+
+    targetProfitElement.innerHTML = sourceProfitElement.innerHTML;
+};
+
+const syncCombinedWeeklyProfitDisplay = function() {
+    let sourceProfitElement = document.getElementById('rs3weeklyshops_totalprofit');
+    let targetProfitElement = document.getElementById('rs3weekly_totalprofit');
+
+    if (!sourceProfitElement || !targetProfitElement) {
+        return;
+    }
+
+    if (isSplitWeeklyTablesEnabled()) {
+        targetProfitElement.innerHTML = '';
+        return;
+    }
+
+    targetProfitElement.innerHTML = sourceProfitElement.innerHTML;
+};
+
+const applyDailySectionMode = function() {
+    let dailiesTbody = document.querySelector('#rs3daily_table tbody');
+    let gatheringTbody = document.querySelector('#rs3dailyshops_table tbody');
+
+    if (!dailiesTbody || !gatheringTbody) {
+        return;
+    }
+
+    if (isSplitDailyTablesEnabled()) {
+        document.body.classList.remove('combine-daily-sections');
+
+        let gatheringRowsInDaily = dailiesTbody.querySelectorAll('tr[data-timeframe="rs3dailyshops"]');
+        for (let row of gatheringRowsInDaily) {
+            gatheringTbody.appendChild(row);
+        }
+    } else {
+        document.body.classList.add('combine-daily-sections');
+
+        let gatheringRows = gatheringTbody.querySelectorAll('tr[data-timeframe="rs3dailyshops"]');
+        for (let row of gatheringRows) {
+            dailiesTbody.appendChild(row);
+        }
+    }
+
+    syncCombinedDailyProfitDisplay();
+};
+
+const applyWeeklySectionMode = function() {
+    let weeklyTbody = document.querySelector('#rs3weekly_table tbody');
+    let weeklyGatheringTbody = document.querySelector('#rs3weeklyshops_table tbody');
+
+    if (!weeklyTbody || !weeklyGatheringTbody) {
+        return;
+    }
+
+    if (isSplitWeeklyTablesEnabled()) {
+        document.body.classList.remove('combine-weekly-sections');
+
+        let weeklyGatheringRowsInWeekly = weeklyTbody.querySelectorAll('tr[data-timeframe="rs3weeklyshops"]');
+        for (let row of weeklyGatheringRowsInWeekly) {
+            weeklyGatheringTbody.appendChild(row);
+        }
+    } else {
+        document.body.classList.add('combine-weekly-sections');
+
+        let weeklyGatheringRows = weeklyGatheringTbody.querySelectorAll('tr[data-timeframe="rs3weeklyshops"]');
+        for (let row of weeklyGatheringRows) {
+            weeklyTbody.appendChild(row);
+        }
+    }
+
+    syncCombinedWeeklyProfitDisplay();
 };
 
 const syncRowActionButton = function(targetRow) {
@@ -448,8 +588,11 @@ const restoreHiddenRow = function(targetRow, visualTimeframe) {
     targetRow.dataset.completed = 'false';
     storage.removeItem(profilePrefix + targetRow.dataset.task);
 
-    if (targetRow.hasAttribute('data-profit')) {
+    if (targetRow.dataset.timeframe === 'rs3dailyshops' && targetRow.hasAttribute('data-profit')) {
         updateDailyProfitDisplay(parseInt(targetRow.dataset.profit, 10));
+    }
+    if (targetRow.dataset.timeframe === 'rs3weeklyshops' && targetRow.hasAttribute('data-profit')) {
+        updateWeeklyProfitDisplay(parseInt(targetRow.dataset.profit, 10));
     }
 
     syncRowActionButton(targetRow);
@@ -574,7 +717,12 @@ const populateTable = function(timeFrame) {
                         let rowMax = calcOutputs(outputMax, totalInputPrice, 'max');
                         totalItemProfit += rowMax.totalItemProfit;
                         if (taskState != 'hide') {
-                            totalDailyProfit += rowMax.totalDailyProfit;
+                            if (timeFrame === 'rs3dailyshops') {
+                                totalDailyProfit += rowMax.totalDailyProfit;
+                            }
+                            if (timeFrame === 'rs3weeklyshops') {
+                                totalWeeklyProfit += rowMax.totalDailyProfit;
+                            }
                         }
                         rowMaxProfit += rowMax.totalDailyProfit
                         buyItems.push(...rowMax.buyItems);
@@ -585,7 +733,12 @@ const populateTable = function(timeFrame) {
                     let rowSum = calcOutputs(data[taskSlug].outputs, totalInputPrice);
                     totalItemProfit += rowSum.totalItemProfit;
                     if (taskState != 'hide') {
-                        totalDailyProfit += rowSum.totalDailyProfit;
+                        if (timeFrame === 'rs3dailyshops') {
+                            totalDailyProfit += rowSum.totalDailyProfit;
+                        }
+                        if (timeFrame === 'rs3weeklyshops') {
+                            totalWeeklyProfit += rowSum.totalDailyProfit;
+                        }
                     }
                     newRow.dataset.profit = rowSum.totalDailyProfit;
                     buyItems.push(...rowSum.buyItems);
@@ -681,6 +834,11 @@ const populateTable = function(timeFrame) {
 
     if (timeFrame == 'rs3dailyshops') {
         document.getElementById('rs3dailyshops_totalprofit').innerHTML = 'Total Profit: <strong>' + totalDailyProfit.toLocaleString() + '</strong><span class="coin">●</span>';
+        syncCombinedDailyProfitDisplay();
+    }
+    if (timeFrame == 'rs3weeklyshops') {
+        document.getElementById('rs3weeklyshops_totalprofit').innerHTML = 'Total Profit: <strong>' + totalWeeklyProfit.toLocaleString() + '</strong><span class="coin">●</span>';
+        syncCombinedWeeklyProfitDisplay();
     }
 };
 
@@ -801,8 +959,11 @@ const tableEventListeners = function() {
             thisRow.dataset.completed = 'hide';
             storage.setItem(profilePrefix + taskSlug, 'hide');
 
-            if (thisRow.hasAttribute('data-profit')) {
+            if (thisRow.dataset.timeframe === 'rs3dailyshops' && thisRow.hasAttribute('data-profit')) {
                 updateDailyProfitDisplay(parseInt(thisRow.dataset.profit, 10) * -1);
+            }
+            if (thisRow.dataset.timeframe === 'rs3weeklyshops' && thisRow.hasAttribute('data-profit')) {
+                updateWeeklyProfitDisplay(parseInt(thisRow.dataset.profit, 10) * -1);
             }
 
             syncRowActionButton(thisRow);
@@ -819,6 +980,10 @@ const tableEventListeners = function() {
  */
 const sortButton = function(timeFrame) {
     const sortButton = document.getElementById(timeFrame + '_sort_button');
+    if (!sortButton) {
+        return;
+    }
+
     sortButton.addEventListener('click', function(e) {
         const table = document.querySelector('#' + timeFrame + '_table');
         const tbody = table.querySelector('tbody');
@@ -985,25 +1150,42 @@ const resetTable = function(timeFrame, html) {
  * @param {String} timeFrame
  */
 const resettableSection = function(timeFrame) {
-    let data = window[timeFrame];
     let resetButton = document.querySelector('#' + timeFrame + '_reset_button');
+    if (!resetButton) {
+        return;
+    }
+
     resetButton.addEventListener('click', function () {
-        // resetTable(timeFrame, false);
-
-        let unhideTable = document.querySelector('div.' + timeFrame + '_table');
-        unhideTable.dataset.hide = '';
-        storage.removeItem(profilePrefix + timeFrame + '-hide');
-
-        for (let taskSlug in data) {
-            let itemState = storage.getItem(profilePrefix + taskSlug) ?? 'false';
-
-            if (itemState == 'hide') {
-                storage.removeItem(profilePrefix + taskSlug);
-            }
+        let timeframesToReset = [timeFrame];
+        if (!isSplitDailyTablesEnabled() && timeFrame === 'rs3daily') {
+            timeframesToReset.push('rs3dailyshops');
+        }
+        if (!isSplitWeeklyTablesEnabled() && timeFrame === 'rs3weekly') {
+            timeframesToReset.push('rs3weeklyshops');
         }
 
-        storage.removeItem(profilePrefix + timeFrame + '-order');
-        resetStoredSectionLayout(timeFrame);
+        for (let resetTimeFrame of timeframesToReset) {
+            let data = window[resetTimeFrame];
+            let unhideTable = document.querySelector('div.' + resetTimeFrame + '_table');
+
+            if (!!unhideTable) {
+                unhideTable.dataset.hide = '';
+            }
+
+            storage.removeItem(profilePrefix + resetTimeFrame + '-hide');
+
+            for (let taskSlug in data) {
+                let itemState = storage.getItem(profilePrefix + taskSlug) ?? 'false';
+
+                if (itemState == 'hide') {
+                    storage.removeItem(profilePrefix + taskSlug);
+                }
+            }
+
+            storage.removeItem(profilePrefix + resetTimeFrame + '-order');
+            resetStoredSectionLayout(resetTimeFrame);
+        }
+
         window.location.reload();
     });
 };
@@ -1054,7 +1236,7 @@ const checkReset = function(timeFrame) {
     nextdate.setUTCSeconds(0);
 
     //check lastupdated < last weekly reset
-    if (timeFrame == 'rs3weekly') {
+    if (['rs3weekly', 'rs3weeklyshops'].includes(timeFrame)) {
         let resetday = 3;
         let weekmodifier = (7 - resetday + nextdate.getUTCDay()) % 7;
         nextdate.setUTCDate(nextdate.getUTCDate() - weekmodifier);
@@ -1072,9 +1254,14 @@ const checkReset = function(timeFrame) {
  * @param {String} timeFrame
  */
 const countDown = function(timeFrame) {
+    let countdownTarget = document.getElementById('countdown-' + timeFrame);
+    if (!countdownTarget) {
+        return;
+    }
+
     let nextdate = new Date();
 
-    if (timeFrame == 'rs3weekly') {
+    if (['rs3weekly', 'rs3weeklyshops'].includes(timeFrame)) {
         let resetday = 3;
         nextdate.setUTCHours(24);
         nextdate.setUTCMinutes(0);
@@ -1307,7 +1494,13 @@ const profiles = function() {
                 storage.removeItem(prefix + timeFrame + '-order');
                 storage.removeItem(prefix + timeFrame + '-updated');
             }
-            storage.removeItem(prefix + sectionLayoutStorageKey);
+            for (let key of Object.keys(storage)) {
+                if (key.startsWith(prefix + sectionLayoutStorageKey)) {
+                    storage.removeItem(key);
+                }
+            }
+            storage.removeItem(prefix + splitDailyTablesStorageKey);
+            storage.removeItem(prefix + splitWeeklyTablesStorageKey);
 
             window.location.reload();
         });
@@ -1374,6 +1567,69 @@ const profiles = function() {
         profileControl.style.visibility = 'hidden';
         profileControl.dataset.display = 'none';
     });
+};
+
+const settings = function() {
+    let settingsButton = document.getElementById('settings-button');
+    let settingsControl = document.getElementById('settings-control');
+    let splitDailyTablesInput = document.getElementById('setting-split-daily-tables');
+    let splitWeeklyTablesInput = document.getElementById('setting-split-weekly-tables');
+
+    if (!settingsButton || !settingsControl || !splitDailyTablesInput || !splitWeeklyTablesInput) {
+        return;
+    }
+
+    splitDailyTablesInput.checked = isSplitDailyTablesEnabled();
+    splitWeeklyTablesInput.checked = isSplitWeeklyTablesEnabled();
+
+    settingsButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        let display = settingsControl.dataset.display;
+        if (display == 'none') {
+            settingsControl.style.display = 'block';
+            settingsControl.style.visibility = 'visible';
+            settingsControl.dataset.display = 'block';
+        } else {
+            settingsControl.style.display = 'none';
+            settingsControl.style.visibility = 'hidden';
+            settingsControl.dataset.display = 'none';
+        }
+    });
+
+    splitDailyTablesInput.addEventListener('change', function() {
+        if (this.checked) {
+            storage.removeItem(profilePrefix + splitDailyTablesStorageKey);
+        } else {
+            storage.setItem(profilePrefix + splitDailyTablesStorageKey, 'false');
+        }
+
+        window.location.reload();
+    });
+
+    splitWeeklyTablesInput.addEventListener('change', function() {
+        if (this.checked) {
+            storage.setItem(profilePrefix + splitWeeklyTablesStorageKey, 'true');
+        } else {
+            storage.removeItem(profilePrefix + splitWeeklyTablesStorageKey);
+        }
+
+        window.location.reload();
+    });
+
+    settingsControl.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+
+    let hideSettingsControl = function() {
+        settingsControl.style.display = 'none';
+        settingsControl.style.visibility = 'hidden';
+        settingsControl.dataset.display = 'none';
+    };
+
+    document.addEventListener('click', hideSettingsControl);
+    document.addEventListener('scroll', hideSettingsControl);
 };
 
 /**
@@ -1548,6 +1804,7 @@ const generateToken = function() {
 window.onload = function() {
     enableBootstrapTooltips();    
     profiles();
+    settings();
     layouts();
 
     for (const timeFrame of timeframes) {
@@ -1560,6 +1817,8 @@ window.onload = function() {
     }
 
     applyStoredSectionLayout();
+    applyDailySectionMode();
+    applyWeeklySectionMode();
     draggableTable();
     for (const timeFrame of timeframes) {
         updateShowHiddenButton(timeFrame);
@@ -1568,6 +1827,7 @@ window.onload = function() {
     dropdownMenuHelper();
     tableEventListeners();
     sortButton('rs3dailyshops');
+    sortButton('rs3weeklyshops');
     itemStatsTooltip();
     warbandsCounter();
     merchantStock();

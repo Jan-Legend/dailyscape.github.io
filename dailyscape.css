@@ -59,6 +59,21 @@ body {
     z-index: 100;
 }
 
+#settings-control {
+    display: none;
+    visibility: hidden;
+    position: absolute;
+    right: 0;
+    min-width: 265px;
+    background: #333;
+    padding: 8px;
+    z-index: 100;
+}
+
+#settings-control .form-check {
+    margin-top: 8px;
+}
+
 #profile-list {
     margin: 0 0 7px 0;
     padding: 0;
@@ -71,6 +86,7 @@ body {
 }
 
 #profile-button span.expanding_text,
+#settings-button span.expanding_text,
 #layout-button span.expanding_text,
 #token-button span.expanding_text {
     font-size: 1rem;
@@ -411,6 +427,22 @@ div.table_container[data-show-hidden="true"] .activity_table tr[data-completed="
     float:none;
 }
 
+.compact #rs3weeklyshops_totalprofit {
+    float:none;
+}
+
+#rs3daily_totalprofit {
+    float: left;
+    white-space: nowrap;
+    display: none;
+}
+
+#rs3weekly_totalprofit {
+    float: left;
+    white-space: nowrap;
+    display: none;
+}
+
 #tooltip {
     position: absolute;
     display: none;
@@ -434,6 +466,35 @@ div.table_container[data-show-hidden="true"] .activity_table tr[data-completed="
 #rs3dailyshops_totalprofit {
     float: left;
     white-space: nowrap;
+}
+
+#rs3weeklyshops_totalprofit {
+    float: left;
+    white-space: nowrap;
+}
+
+.combine-daily-sections #rs3dailyshops_nav {
+    display: none;
+}
+
+.combine-daily-sections #gathering {
+    display: none;
+}
+
+.combine-daily-sections #rs3daily_totalprofit {
+    display: inline-block;
+}
+
+.combine-weekly-sections #rs3weeklyshops_nav {
+    display: none;
+}
+
+.combine-weekly-sections #weekly-gathering {
+    display: none;
+}
+
+.combine-weekly-sections #rs3weekly_totalprofit {
+    display: inline-block;
 }
 
 .coin {
@@ -509,7 +570,13 @@ footer a img {
         left: 0;
     }
 
+    #settings-control {
+        right: auto;
+        left: 0;
+    }
+
     #profile-button,
+    #settings-button,
     #layout-button {
         padding: 10px;
     }
