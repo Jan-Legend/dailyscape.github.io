@@ -1,6 +1,7 @@
 const storage = window.localStorage;
 
 const timeframes = ['rs3daily', 'rs3dailyshops', 'rs3weekly', 'rs3monthly'];
+const sectionLayoutStorageKey = 'section-layout';
 var currentProfile = 'default';
 var currentLayout = 'default';
 var profilePrefix = '';
@@ -322,6 +323,87 @@ var rs3monthly = {
     "dream-of-iaia-xp": {task: "Dream of Iaia XP", url: "https://runescape.wiki/w/Dream_of_Iaia", desc: "Use up stored xp in skilling stations"},
 };
 
+const getSectionLayoutKey = function() {
+    return profilePrefix + sectionLayoutStorageKey;
+};
+
+const getStoredSectionLayout = function() {
+    let storedLayout = storage.getItem(getSectionLayoutKey());
+
+    if (!storedLayout) {
+        return {};
+    }
+
+    try {
+        let parsedLayout = JSON.parse(storedLayout);
+        return typeof parsedLayout === 'object' && parsedLayout !== null ? parsedLayout : {};
+    } catch (e) {
+        return {};
+    }
+};
+
+const saveSectionLayout = function() {
+    let sectionLayout = {};
+
+    for (let timeFrame of timeframes) {
+        let tbody = document.querySelector('#' + timeFrame + '_table tbody');
+        sectionLayout[timeFrame] = Array.from(tbody.querySelectorAll('tr')).map((row) => row.dataset.task);
+    }
+
+    storage.setItem(getSectionLayoutKey(), JSON.stringify(sectionLayout));
+};
+
+const applyStoredSectionLayout = function() {
+    let sectionLayout = getStoredSectionLayout();
+
+    for (let timeFrame of timeframes) {
+        let sectionOrder = sectionLayout[timeFrame];
+        let tbody = document.querySelector('#' + timeFrame + '_table tbody');
+
+        if (!Array.isArray(sectionOrder)) {
+            continue;
+        }
+
+        for (let taskSlug of sectionOrder) {
+            let targetRow = document.querySelector('tr[data-task="' + taskSlug + '"]');
+
+            if (!!targetRow) {
+                tbody.appendChild(targetRow);
+            }
+        }
+    }
+};
+
+const resetStoredSectionLayout = function(timeFrame) {
+    let sectionLayout = getStoredSectionLayout();
+    let defaultTasks = Object.keys(window[timeFrame]);
+
+    if (Object.keys(sectionLayout).length === 0) {
+        return;
+    }
+
+    for (let section of timeframes) {
+        if (!Array.isArray(sectionLayout[section])) {
+            sectionLayout[section] = [];
+        }
+
+        sectionLayout[section] = sectionLayout[section].filter((taskSlug) => !defaultTasks.includes(taskSlug));
+    }
+
+    let homeSectionTasks = Array.isArray(sectionLayout[timeFrame]) ? sectionLayout[timeFrame] : [];
+    sectionLayout[timeFrame] = [...defaultTasks, ...homeSectionTasks];
+
+    storage.setItem(getSectionLayoutKey(), JSON.stringify(sectionLayout));
+};
+
+const clearDragState = function() {
+    let clearRows = document.querySelectorAll('.activity_table tbody tr');
+
+    for (let clearRow of clearRows) {
+        clearRow.classList.remove('dragover');
+    }
+};
+
 /**
  * Populate the HTML with data for a timeFrame and attach listeners
  * @param {String} timeFrame
@@ -377,6 +459,7 @@ const populateTable = function(timeFrame) {
         let taskState = storage.getItem(profilePrefix + taskSlug) ?? 'false';
 
         newRow.dataset.task=taskSlug;
+        newRow.dataset.timeframe = timeFrame;
 
         if (!!data[taskSlug].url) {
             newRowAnchor.href = data[taskSlug].url;
@@ -583,8 +666,8 @@ const tableEventListeners = function() {
 
     for (let colorCell of rowsColor) {
         colorCell.addEventListener('click', function () {
-            let thisTimeframe = this.closest('table').dataset.timeframe;
             let thisRow = this.closest('tr');
+            let thisTimeframe = thisRow.dataset.timeframe;
             let taskSlug = thisRow.dataset.task;
             let newState = (thisRow.dataset.completed === 'true') ? 'false' : 'true'
             thisRow.dataset.completed = newState;
@@ -622,6 +705,7 @@ const tableEventListeners = function() {
             }
 
             thisTbody.appendChild(thisRow);
+            saveSectionLayout();
         });
     }
 };
@@ -662,20 +746,21 @@ const sortButton = function(timeFrame) {
         for (let sortedrow of tableRows) {
             tbody.appendChild(sortedrow);
         }
+
+        saveSectionLayout();
     });
 };
 
 /**
  * Attach drag and drop functionality after elements added to DOM
- * @param {String} timeFrame
  */
-const draggableTable = function(timeFrame) {
-
-    const targetRows = document.querySelectorAll('#' + timeFrame + '_table tbody tr');
+const draggableTable = function() {
+    const targetRows = document.querySelectorAll('.activity_table tbody tr');
+    const targetBodies = document.querySelectorAll('.activity_table tbody');
 
     for (let row of targetRows) {
         row.addEventListener('dragstart', function(e) {
-            dragRow = e.target;
+            dragRow = this;
         });
 
         row.addEventListener('dragenter', function(e) {
@@ -685,9 +770,13 @@ const draggableTable = function(timeFrame) {
         row.addEventListener('dragover', function(e) {
             e.preventDefault();
 
-            //requery this in case rows reordered since load
-            let rowArray = Array.from(document.querySelectorAll('#' + timeFrame + '_table tbody tr'));
             let dragOverRow = e.target.closest('tr');
+
+            if (!dragRow || !dragOverRow || dragOverRow === dragRow) {
+                return;
+            }
+
+            let rowArray = Array.from(dragOverRow.parentNode.querySelectorAll('tr'));
 
             if (rowArray.indexOf(dragRow) < rowArray.indexOf(dragOverRow)) {
                 dragOverRow.after(dragRow);
@@ -701,26 +790,65 @@ const draggableTable = function(timeFrame) {
         });
 
         row.addEventListener('dragend', function(e) {
-            this.classList.remove('dragover');
-
-            let clearRows = document.querySelectorAll('#' + timeFrame + '_table tbody tr');
-            for (let clearRow of clearRows) {
-                clearRow.classList.remove('dragover');
+            clearDragState();
+            if (!!dragRow) {
+                saveSectionLayout();
+                dragRow = null;
             }
         });
 
         row.addEventListener('drop', function(e) {
-            e.stopPropagation();
-
-            //save the order
-            let csv = [];
-            let rows = document.querySelectorAll('#' + timeFrame + '_table tbody tr');
-
-            for (let row of rows) {
-                csv.push(row.dataset.task);
+            if (!dragRow) {
+                return false;
             }
 
-            storage.setItem(profilePrefix + timeFrame + '-order', csv.join(','));
+            let dropTargetRow = e.target.closest('tr');
+
+            if (!!dropTargetRow && dropTargetRow !== dragRow && dropTargetRow.parentNode === this.parentNode) {
+                let rowArray = Array.from(dropTargetRow.parentNode.querySelectorAll('tr'));
+
+                if (rowArray.indexOf(dragRow) < rowArray.indexOf(dropTargetRow)) {
+                    dropTargetRow.after(dragRow);
+                } else {
+                    dropTargetRow.before(dragRow);
+                }
+            }
+
+            e.stopPropagation();
+            e.preventDefault();
+            clearDragState();
+            saveSectionLayout();
+            dragRow = null;
+
+            return false;
+        });
+    }
+
+    for (let tbody of targetBodies) {
+        tbody.addEventListener('dragover', function(e) {
+            e.preventDefault();
+
+            if (!dragRow || !!e.target.closest('tr')) {
+                return;
+            }
+
+            this.appendChild(dragRow);
+        });
+
+        tbody.addEventListener('drop', function(e) {
+            e.preventDefault();
+
+            if (!dragRow) {
+                return false;
+            }
+
+            if (!e.target.closest('tr')) {
+                this.appendChild(dragRow);
+            }
+
+            clearDragState();
+            saveSectionLayout();
+            dragRow = null;
 
             return false;
         });
@@ -733,7 +861,7 @@ const draggableTable = function(timeFrame) {
  * @param {Boolean} html change the data on the element or not
  */
 const resetTable = function(timeFrame, html) {
-    const tableRows = document.querySelectorAll('#' + timeFrame + '_table tbody tr');
+    const tableRows = document.querySelectorAll('tr[data-timeframe="' + timeFrame + '"]');
 
     for (let rowTarget of tableRows) {
         let itemState = storage.getItem(profilePrefix + rowTarget.dataset.task) ?? 'false';
@@ -772,6 +900,7 @@ const resettableSection = function(timeFrame) {
         }
 
         storage.removeItem(profilePrefix + timeFrame + '-order');
+        resetStoredSectionLayout(timeFrame);
         window.location.reload();
     });
 };
@@ -1075,6 +1204,7 @@ const profiles = function() {
                 storage.removeItem(prefix + timeFrame + '-order');
                 storage.removeItem(prefix + timeFrame + '-updated');
             }
+            storage.removeItem(prefix + sectionLayoutStorageKey);
 
             window.location.reload();
         });
@@ -1319,12 +1449,14 @@ window.onload = function() {
 
     for (const timeFrame of timeframes) {
         populateTable(timeFrame);
-        draggableTable(timeFrame);
         checkReset(timeFrame);
         resettableSection(timeFrame);
         hidableSection(timeFrame);
         countDown(timeFrame);
     }
+
+    applyStoredSectionLayout();
+    draggableTable();
 
     dropdownMenuHelper();
     tableEventListeners();
