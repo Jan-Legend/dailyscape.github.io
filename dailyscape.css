@@ -113,8 +113,30 @@ div.table_container[data-hide="hide"] table tbody {
     max-width: 7rem;
 }
 
+/* Keep header control buttons stable; use title tooltips for labels instead of expanding width */
+.activity_table thead .expanding_button span.expanding_text {
+    display: none;
+}
+
+.activity_table thead .expanding_button:hover span {
+    max-width: 0;
+}
+
+/* Keep header control buttons from retaining focus/active ring visuals after click */
+.activity_table thead .btn:focus,
+.activity_table thead .btn:focus-visible,
+.activity_table thead .btn:active,
+.activity_table thead .btn.active:focus {
+    outline: none;
+    box-shadow: none;
+}
+
 div.table_container .unhide_button {
     display: inline-block;
+}
+
+div.table_container .show_hidden_button {
+    display: none;
 }
 
 div.table_container .unhide_button {
@@ -160,7 +182,7 @@ div.table_container[data-hide="hide"] .unhide_button {
     left: 0;
     height: 100%;
     width: 100%;
-    padding: 1rem;
+    padding: 1rem 4.25rem 1rem 1rem;
     line-height: 1rem;
     text-decoration: none;
 }
@@ -199,9 +221,11 @@ div.table_container[data-hide="hide"] .unhide_button {
 
 .activity_table td.activity_name button.hide-button {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
     display: none;
+    z-index: 120;
 }
 
 .activity_table tbody tr:hover td.activity_name button.hide-button {
@@ -220,9 +244,35 @@ div.table_container[data-hide="hide"] .unhide_button {
     color: #4083ca;
 }
 
-.activity_table tr[data-completed="hide"] {
+div.table_container:not([data-show-hidden="true"]) .activity_table tr[data-completed="hide"] {
     display: none;
     visibility: hidden;
+}
+
+div.table_container[data-show-hidden="true"] .activity_table tr[data-completed="hide"] .activity_color {
+    background-color: #4a3a08;
+    box-shadow: inset 0 0 0 9999px #4a3a08;
+}
+
+div.table_container[data-show-hidden="true"] .activity_table tr:hover[data-completed="hide"] .activity_color {
+    background-color: #382c06;
+    box-shadow: inset 0 0 0 9999px #382c06;
+}
+
+div.table_container[data-show-hidden="true"] .activity_table tr[data-completed="hide"] .activity_check_off {
+    display: inline-block;
+    visibility: visible;
+    opacity: 0.55;
+}
+
+div.table_container[data-show-hidden="true"] .activity_table tr[data-completed="hide"] .activity_check_on {
+    display: none;
+    visibility: hidden;
+}
+
+div.table_container[data-show-hidden="true"] .activity_table tr[data-completed="hide"] .activity_desc,
+div.table_container[data-show-hidden="true"] .activity_table tr[data-completed="hide"] .activity_name a {
+    opacity: 0.8;
 }
 
 .activity_table tr[data-completed="true"] .activity_color {
@@ -280,10 +330,6 @@ div.table_container[data-hide="hide"] .unhide_button {
     border: none;
 }
 
-.compact .activity_table tbody tr[data-completed="hide"] {
-    display: none;
-}
-
 .compact .activity_table th,
 .compact .activity_table td.activity_name {
     width: 100%;
@@ -321,8 +367,14 @@ div.table_container[data-hide="hide"] .unhide_button {
 
 .compact .activity_table td.activity_color .item_profit {
     position: absolute;
-    right: 5px;
-    z-index: 100;
+    right: 6px;
+    z-index: 50;
+    pointer-events: none;
+    transition: right 0.15s ease;
+}
+
+.compact .activity_table tbody tr:hover td.activity_color .item_profit {
+    right: 50px;
 }
 
 .compact .activity_table td.activity_color .item_profit .item_profit_label {
@@ -331,10 +383,10 @@ div.table_container[data-hide="hide"] .unhide_button {
 }
 
 .compact .activity_table td.activity_name button.hide-button {
-    /* left: 10px; */
-    position: relative;
-    top: auto;
-    right: auto;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
 }
 
 .compact #rs3dailyshops_totalprofit {

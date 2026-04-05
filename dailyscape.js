@@ -404,6 +404,93 @@ const clearDragState = function() {
     }
 };
 
+const updateDailyProfitDisplay = function(delta) {
+    let totalProfitElement = document.getElementById('rs3dailyshops_totalprofit');
+
+    if (!totalProfitElement) {
+        return;
+    }
+
+    let totalProfitNumber = parseInt(String(totalProfitElement.textContent).replace(/\D/g, ''), 10) || 0;
+    let newProfit = totalProfitNumber + delta;
+    totalProfitElement.innerHTML = 'Total Profit: <strong>' + newProfit.toLocaleString() + '</strong><span class="coin">●</span>';
+};
+
+const syncRowActionButton = function(targetRow) {
+    if (!targetRow) {
+        return;
+    }
+
+    let actionButton = targetRow.querySelector('td.activity_name button.hide-button');
+
+    if (!actionButton) {
+        return;
+    }
+
+    if (targetRow.dataset.completed === 'hide') {
+        actionButton.classList.remove('btn-danger');
+        actionButton.classList.add('btn-success');
+        actionButton.title = 'Show row again';
+        actionButton.innerHTML = '+';
+    } else {
+        actionButton.classList.remove('btn-success');
+        actionButton.classList.add('btn-danger');
+        actionButton.title = 'Hide row';
+        actionButton.innerHTML = '⊘';
+    }
+};
+
+const restoreHiddenRow = function(targetRow, visualTimeframe) {
+    if (!targetRow || targetRow.dataset.completed !== 'hide') {
+        return;
+    }
+
+    targetRow.dataset.completed = 'false';
+    storage.removeItem(profilePrefix + targetRow.dataset.task);
+
+    if (targetRow.hasAttribute('data-profit')) {
+        updateDailyProfitDisplay(parseInt(targetRow.dataset.profit, 10));
+    }
+
+    syncRowActionButton(targetRow);
+    saveSectionLayout();
+    updateShowHiddenButton(visualTimeframe);
+};
+
+const updateShowHiddenButton = function(timeFrame) {
+    let showHiddenButton = document.getElementById(timeFrame + '_show_hidden_button');
+    let tableContainer = document.querySelector('div.' + timeFrame + '_table');
+    let tbody = document.querySelector('#' + timeFrame + '_table tbody');
+    let hiddenRows = tbody.querySelectorAll('tr[data-completed="hide"]');
+    let hiddenCount = hiddenRows.length;
+    let showHidden = tableContainer.dataset.showHidden === 'true';
+
+    if (!showHiddenButton) {
+        return;
+    }
+
+    if (hiddenCount === 0) {
+        tableContainer.dataset.showHidden = 'false';
+    }
+
+    showHidden = tableContainer.dataset.showHidden === 'true';
+
+    showHiddenButton.style.display = hiddenCount > 0 ? 'inline-block' : 'none';
+    showHiddenButton.title = (showHidden ? 'Hide' : 'Show') + ' hidden rows (' + hiddenCount + ')';
+    showHiddenButton.innerHTML = (showHidden ? '-' : '+') + '<span class="expanding_text">' + (showHidden ? 'Hide Hidden' : 'Show Hidden') + ' (' + hiddenCount + ')</span>';
+};
+
+const showHiddenButton = function(timeFrame) {
+    let showButton = document.getElementById(timeFrame + '_show_hidden_button');
+    showButton.addEventListener('click', function() {
+        let tableContainer = document.querySelector('div.' + timeFrame + '_table');
+        tableContainer.dataset.showHidden = tableContainer.dataset.showHidden === 'true' ? 'false' : 'true';
+        updateShowHiddenButton(timeFrame);
+    });
+
+    updateShowHiddenButton(timeFrame);
+};
+
 /**
  * Populate the HTML with data for a timeFrame and attach listeners
  * @param {String} timeFrame
@@ -563,6 +650,7 @@ const populateTable = function(timeFrame) {
 
         tbody.appendChild(newRow);
         newRow.dataset.completed = taskState;
+        syncRowActionButton(newRow);
     }
 
     //@todo kludgy double dom manipulation because depends on profit calcs in the html
@@ -690,22 +778,31 @@ const tableEventListeners = function() {
     }
 
     for (let rowHide of rowsHide) {
-        rowHide.addEventListener('click', function() {
+        rowHide.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
             let thisTbody = this.closest('tbody');
+            let thisVisualTimeframe = this.closest('table').dataset.timeframe;
             let thisRow = this.closest('tr');
+            
+            if (thisRow.dataset.completed === 'hide') {
+                restoreHiddenRow(thisRow, thisVisualTimeframe);
+                return;
+            }
+
             let taskSlug = thisRow.dataset.task;
             thisRow.dataset.completed = 'hide';
             storage.setItem(profilePrefix + taskSlug, 'hide');
 
             if (thisRow.hasAttribute('data-profit')) {
-                let totalProfitElement = document.getElementById('rs3dailyshops_totalprofit');
-                let totalProfitNumber = parseInt(String(totalProfitElement.innerHTML).replace(/\D/g, ''), 10);
-                let newProfit = totalProfitNumber - parseInt(thisRow.dataset.profit);
-                document.getElementById('rs3dailyshops_totalprofit').innerHTML = 'Total Profit: <strong>' + newProfit.toLocaleString() + '</strong><span class="coin">●</span>';
+                updateDailyProfitDisplay(parseInt(thisRow.dataset.profit, 10) * -1);
             }
 
+            syncRowActionButton(thisRow);
             thisTbody.appendChild(thisRow);
             saveSectionLayout();
+            updateShowHiddenButton(thisVisualTimeframe);
         });
     }
 };
@@ -1452,11 +1549,15 @@ window.onload = function() {
         checkReset(timeFrame);
         resettableSection(timeFrame);
         hidableSection(timeFrame);
+        showHiddenButton(timeFrame);
         countDown(timeFrame);
     }
 
     applyStoredSectionLayout();
     draggableTable();
+    for (const timeFrame of timeframes) {
+        updateShowHiddenButton(timeFrame);
+    }
 
     dropdownMenuHelper();
     tableEventListeners();

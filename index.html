@@ -126,6 +126,7 @@
                     <td>
                         <span class="text-nowrap">
                             <button id="rs3daily_reset_button" class="reset_button expanding_button btn btn-secondary btn-sm active" title="Reset hiding and order to default">↺<span class="expanding_text">Reset</span></button>
+                            <button id="rs3daily_show_hidden_button" class="show_hidden_button expanding_button btn btn-secondary btn-sm active" title="Show hidden rows">+<span class="expanding_text">Show Hidden</span></button>
                             <button id="rs3daily_hide_button" class="hide_button expanding_button btn btn-secondary btn-sm active" title="Hide section">▲<span class="expanding_text">Hide</span></button>
                             <button id="rs3daily_unhide_button" class="unhide_button expanding_button btn btn-secondary btn-sm active" title="Unhide Section">▼<span class="expanding_text">Unhide</span></button>
                         </span>
@@ -146,6 +147,7 @@
                         <span class="text-nowrap">
                             <button id="rs3dailyshops_reset_button" class="reset_button expanding_button btn btn-secondary btn-sm active" title="Reset hiding and order to default">↺<span class="expanding_text">Reset</span></button>
                             <button id="rs3dailyshops_sort_button" class="sort_button expanding_button btn btn-secondary btn-sm active" title="Sort by profit/alpha/default">⇅<span class="expanding_text">Sort</span></button>
+                            <button id="rs3dailyshops_show_hidden_button" class="show_hidden_button expanding_button btn btn-secondary btn-sm active" title="Show hidden rows">+<span class="expanding_text">Show Hidden</span></button>
                             <button id="rs3dailyshops_hide_button" class="hide_button expanding_button btn btn-secondary btn-sm active" title="Hide section">▲<span class="expanding_text">Hide</span></button>
                             <button id="rs3dailyshops_unhide_button" class="unhide_button expanding_button btn btn-secondary btn-sm active" title="Unhide Section">▼<span class="expanding_text">Unhide</span></button>
                         </span>
@@ -164,6 +166,7 @@
                     <td>
                         <span class="text-nowrap">
                             <button id="rs3weekly_reset_button" class="reset_button expanding_button btn btn-secondary btn-sm active" title="Reset hiding and order to default">↺<span class="expanding_text">Reset</span></button>
+                            <button id="rs3weekly_show_hidden_button" class="show_hidden_button expanding_button btn btn-secondary btn-sm active" title="Show hidden rows">+<span class="expanding_text">Show Hidden</span></button>
                             <button id="rs3weekly_hide_button" class="hide_button expanding_button btn btn-secondary btn-sm active" title="Hide section">▲<span class="expanding_text">Hide</span></button>
                             <button id="rs3weekly_unhide_button" class="unhide_button expanding_button btn btn-secondary btn-sm active" title="Unhide Section">▼<span class="expanding_text">Unhide</span></button>
                         </span>
@@ -182,6 +185,7 @@
                     <td>
                         <span class="text-nowrap">
                             <button id="rs3monthly_reset_button" class="reset_button expanding_button btn btn-secondary btn-sm active" title="Reset hiding and order to default">↺<span class="expanding_text">Reset</span></button>
+                            <button id="rs3monthly_show_hidden_button" class="show_hidden_button expanding_button btn btn-secondary btn-sm active" title="Show hidden rows">+<span class="expanding_text">Show Hidden</span></button>
                             <button id="rs3monthly_hide_button" class="hide_button expanding_button btn btn-secondary btn-sm active" title="Hide section">▲<span class="expanding_text">Hide</span></button>
                             <button id="rs3monthly_unhide_button" class="unhide_button expanding_button btn btn-secondary btn-sm active" title="Unhide Section">▼<span class="expanding_text">Unhide</span></button>
                         </span>
@@ -195,7 +199,7 @@
 
 <template id="sample_row">
     <tr draggable="true">
-        <td class="activity_name" draggable="false"><a target="_blank" rel="noopener noreferrer" draggable="false">Name</a><button class="hide-button expanding_button btn btn-danger btn-sm active">⊘<span class="expanding_text">Hide</span></button></td>
+        <td class="activity_name" draggable="false"><a target="_blank" rel="noopener noreferrer" draggable="false">Name</a><button class="hide-button btn btn-danger btn-sm active" title="Hide row">⊘</button></td>
         <td class="activity_color"><span class="activity_check_off">☐</span><span class="activity_check_on">☑</span><span class="activity_desc">&nbsp;</span></td>
     </tr>
 </template>
