@@ -173,6 +173,13 @@ var rs3weeklyshops = {
             {id: 1515, quantity: 31, shop_price: 0}, //yew logs
         ]
     },
+    "lupe": {task: "Soul Supplies", url: "https://runescape.wiki/w/Lupe#Underworld_achievement_rewards", short: true, desc: "Claim free supplies from Lupe's Soul Supplies",
+        outputs: [
+            {id: 55595, quantity: 20, shop_price: 0}, //regular ghostly ink
+            {id: 55596, quantity: 12, shop_price: 0}, //greater ghostly ink
+            {id: 55597, quantity: 8, shop_price: 0}, //powerful ghostly ink
+        ]
+    },
     "feathers-of-ma-at": {task: "Feathers of Ma'at", url: "https://runescape.wiki/w/Money_making_guide/Buying_feathers_of_Ma%27at", short: true, desc: "Weekly stock (7 days)",
         outputs: [
             {id: 40303, quantity: 7000, shop_price: 1500}, //feather of ma'at
